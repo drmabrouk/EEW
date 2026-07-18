@@ -88,9 +88,14 @@ class AuthManager {
 
         \WSHC\UserManagement\ActivityLogger::log($user->ID, 'login', 'User logged in');
 
+        $redirect_url = home_url('/id');
+        if (!empty($_POST['redirect_to'])) {
+            $redirect_url = wp_validate_redirect(esc_url_raw($_POST['redirect_to']), home_url('/id'));
+        }
+
         wp_send_json_success([
             'message' => 'Login successful. Redirecting...',
-            'redirect' => home_url('/id')
+            'redirect' => $redirect_url
         ]);
     }
 
@@ -130,9 +135,22 @@ class AuthManager {
 
         \WSHC\UserManagement\ActivityLogger::log($user_id, 'registration', 'User registered');
 
+        // Automatically log them in after registration for a smoother UX as requested
+        $credentials = [
+            'user_login'    => $username,
+            'user_password' => $password,
+            'remember'      => true,
+        ];
+        wp_signon($credentials, false);
+
+        $redirect_url = home_url('/id');
+        if (!empty($_POST['redirect_to'])) {
+            $redirect_url = wp_validate_redirect(esc_url_raw($_POST['redirect_to']), home_url('/id'));
+        }
+
         wp_send_json_success([
-            'message' => 'Registration successful. You can now log in.',
-            'form' => 'login'
+            'message' => 'Registration successful. Redirecting...',
+            'redirect' => $redirect_url
         ]);
     }
 

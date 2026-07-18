@@ -1,18 +1,27 @@
 jQuery(document).ready(function($) {
     const ajaxurl = wshc_auth_obj.ajaxurl;
 
+    // Parse redirect_to parameter from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirectTo = urlParams.get('redirect_to') || '';
+
     function showMessage(wrapper, message, type) {
         const msgDiv = wrapper.find('.wshc-message');
         msgDiv.text(message).removeClass('hidden success error').addClass(type).hide().fadeIn(300);
     }
 
     function switchForm(target) {
-        const container = $('.wshc-auth-container > div');
-        const nextForm = $(`#wshc-${target}-form-wrapper`);
+        $('.wshc-auth-tab').removeClass('active');
+        $(`.wshc-auth-tab[data-target="${target}"]`).addClass('active');
 
-        container.fadeOut(200, function() {
-            container.addClass('hidden');
-            nextForm.removeClass('hidden').hide().fadeIn(300);
+        const activePanel = $('.wshc-auth-form-panel:not(.hidden)');
+        const nextPanel = $(`#wshc-${target}-form-wrapper`);
+
+        if (activePanel.attr('id') === nextPanel.attr('id')) return;
+
+        activePanel.fadeOut(200, function() {
+            activePanel.addClass('hidden');
+            nextPanel.removeClass('hidden').hide().fadeIn(300);
             $('.wshc-message').addClass('hidden').text('');
 
             // Reset buttons
@@ -22,6 +31,11 @@ jQuery(document).ready(function($) {
             $('#wshc-reset-password-form .wshc-auth-btn').text('Reset Password').prop('disabled', false);
         });
     }
+
+    $(document).on('click', '.wshc-auth-tab', function(e) {
+        e.preventDefault();
+        switchForm($(this).data('target'));
+    });
 
     $(document).on('click', '.switch-form', function(e) {
         e.preventDefault();
@@ -43,13 +57,13 @@ jQuery(document).ready(function($) {
     // Handle Login
     $(document).on('submit', '#wshc-login-form', function(e) {
         e.preventDefault();
-        const wrapper = $(this).closest('div');
-        const formData = $(this).serialize();
+        const wrapper = $(this).closest('.wshc-auth-form-panel');
+        const formData = $(this).serialize() + '&action=wshc_login&redirect_to=' + encodeURIComponent(redirectTo);
         
         $.ajax({
             url: ajaxurl,
             type: 'POST',
-            data: formData + '&action=wshc_login',
+            data: formData,
             beforeSend: function() {
                 wrapper.find('.wshc-auth-btn').prop('disabled', true).text('SIGNING IN...');
             },
@@ -70,13 +84,13 @@ jQuery(document).ready(function($) {
     // Handle Registration
     $(document).on('submit', '#wshc-registration-form', function(e) {
         e.preventDefault();
-        const wrapper = $(this).closest('div');
-        const formData = $(this).serialize();
+        const wrapper = $(this).closest('.wshc-auth-form-panel');
+        const formData = $(this).serialize() + '&action=wshc_register&redirect_to=' + encodeURIComponent(redirectTo);
 
         $.ajax({
             url: ajaxurl,
             type: 'POST',
-            data: formData + '&action=wshc_register',
+            data: formData,
             beforeSend: function() {
                 wrapper.find('.wshc-auth-btn').prop('disabled', true).text('REGISTERING...');
             },
@@ -84,7 +98,11 @@ jQuery(document).ready(function($) {
                 if (response.success) {
                     showMessage(wrapper, response.data.message, 'success');
                     setTimeout(() => {
-                        switchForm('login');
+                        if (response.data.redirect) {
+                            window.location.href = response.data.redirect;
+                        } else {
+                            switchForm('login');
+                        }
                     }, 2000);
                 } else {
                     showMessage(wrapper, response.data.message, 'error');
@@ -97,7 +115,7 @@ jQuery(document).ready(function($) {
     // Handle Forgot Password
     $(document).on('submit', '#wshc-forgot-password-form', function(e) {
         e.preventDefault();
-        const wrapper = $(this).closest('div');
+        const wrapper = $(this).closest('.wshc-auth-form-panel');
         const formData = $(this).serialize();
 
         $.ajax({
@@ -125,7 +143,7 @@ jQuery(document).ready(function($) {
     // Handle Reset Password
     $(document).on('submit', '#wshc-reset-password-form', function(e) {
         e.preventDefault();
-        const wrapper = $(this).closest('div');
+        const wrapper = $(this).closest('.wshc-auth-form-panel');
         const formData = $(this).serialize();
 
         $.ajax({
