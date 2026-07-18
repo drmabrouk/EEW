@@ -20,9 +20,15 @@
     <?php endif; ?>
 
     <div class="pub-actions">
-        <a href="<?php echo esc_url($item->manuscript_url); ?>" class="download-pdf-btn" data-id="<?php echo $item->id; ?>" target="_blank">
-            <span class="dashicons dashicons-pdf"></span> Download PDF
-        </a>
+        <?php if (is_user_logged_in()) : ?>
+            <a href="<?php echo esc_url($item->manuscript_url); ?>" class="download-pdf-btn" data-id="<?php echo $item->id; ?>" target="_blank">
+                <span class="dashicons dashicons-pdf"></span> Download PDF
+            </a>
+        <?php else : ?>
+            <a href="<?php echo esc_url(home_url('/login?redirect_to=' . urlencode($_SERVER['REQUEST_URI']))); ?>" class="download-pdf-btn login-required-btn">
+                <span class="dashicons dashicons-lock"></span> Login to Download
+            </a>
+        <?php endif; ?>
         <button class="copy-citation-btn" data-citation="<?php
             echo esc_attr("WSHC Research Repository. ($item->serial_id). $item->title. " . date('Y', strtotime($item->published_at)) . ".");
         ?>">
