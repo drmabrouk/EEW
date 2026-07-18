@@ -265,14 +265,7 @@ class UserRegistry {
         }
         if ($has_member_role) {
             $full_name_combined = trim($first_name . ' ' . $last_name) ?: $saved_user->display_name;
-            $existing_app = $wpdb->get_row($wpdb->prepare("SELECT id FROM {$wpdb->prefix}wshc_membership_applications WHERE user_id = %d LIMIT 1", $saved_user_id));
-            if ($existing_app) {
-                $wpdb->update("{$wpdb->prefix}wshc_membership_applications", ['status' => 'approved', 'full_name' => $full_name_combined], ['id' => $existing_app->id]);
-            } else {
-                $wpdb->insert("{$wpdb->prefix}wshc_membership_applications", [
-                    'user_id' => $saved_user_id, 'full_name' => $full_name_combined, 'email' => $email, 'nationality' => '', 'status' => 'approved'
-                ]);
-            }
+            $wpdb->query($wpdb->prepare("INSERT INTO {$wpdb->prefix}wshc_membership_applications (user_id, full_name, email, nationality, status) VALUES (%d, %s, %s, %s, 'approved') ON DUPLICATE KEY UPDATE status = 'approved', full_name = VALUES(full_name)", $saved_user_id, $full_name_combined, $email, ''));
         }
 
         ActivityLogger::log(get_current_user_id(), $user_id ? 'user_update' : 'user_create', "Affected user ID: $result");
@@ -317,7 +310,7 @@ class UserRegistry {
         $reason = sanitize_text_field($_POST['reason'] ?? '');
         $duration = intval($_POST['duration'] ?? 0);
         $status = get_user_meta($user_id, 'wshc_suspended', true);
-        
+
         if ($status) {
             delete_user_meta($user_id, 'wshc_suspended');
             delete_user_meta($user_id, 'wshc_suspension_reason');

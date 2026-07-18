@@ -13,10 +13,6 @@ class Activator {
         self::create_tables();
         self::register_roles();
         self::create_pages();
-
-        $profile_manager = new \WSHC\Memberships\ProfileManager();
-        $profile_manager->add_rewrite_rules();
-        flush_rewrite_rules();
     }
 
     /**
