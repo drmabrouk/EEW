@@ -1015,4 +1015,88 @@ jQuery(document).ready(function($) {
             }
         });
     });
+
+    $('.nav-btn').on('click', function(e) {
+        e.preventDefault();
+        const target = $(this).data('target');
+
+        $('.nav-btn').removeClass('active');
+        $(this).addClass('active');
+
+        // Check if it's a dynamic module
+        const staticSections = ['dashboard-overview', 'dashboard-users', 'dashboard-memberships', 'dashboard-my-profile', 'dashboard-settings', 'dashboard-audit'];
+
+        if (staticSections.includes(target)) {
+            $('.dashboard-section').removeClass('active');
+            $('#dashboard-dynamic-container').hide();
+            $('#' + target).addClass('active').show();
+        } else {
+            $('.dashboard-section').removeClass('active').hide();
+            $('#dashboard-dynamic-container').addClass('active').show();
+            loadDynamicModule(target.replace('dashboard-', ''));
+        }
+    });
+
+    function loadDynamicModule(module) {
+        const container = $('#dynamic-content-area');
+        container.html('<p>Loading module...</p>');
+        $.post(wshc_dashboard_obj.ajaxurl, {
+            action: 'wshc_dashboard_load_module',
+            nonce: wshc_dashboard_obj.nonce,
+            module: module
+        }, function(response) {
+            if (response.success) {
+                container.html(response.data.html);
+            } else {
+                container.html('<p>Error loading module.</p>');
+            }
+        });
+    }
+
+    $(document).on('click', '.restore-pages-btn', function(e) {
+        e.preventDefault();
+        const btn = $(this);
+        btn.prop('disabled', true).text('Restoring...');
+        $.post(wshc_dashboard_obj.ajaxurl, {
+            action: 'wshc_dashboard_restore_pages',
+            nonce: wshc_dashboard_obj.nonce
+        }, function(response) {
+            alert(response.data.message);
+            loadDynamicModule('pages');
+        });
+    });
+
+    $(document).on('click', '.page-action-btn', function(e) {
+        e.preventDefault();
+        if (!confirm('Are you sure?')) return;
+        const btn = $(this);
+        const action = btn.data('action');
+        const id = btn.data('id');
+        $.post(wshc_dashboard_obj.ajaxurl, {
+            action: 'wshc_dashboard_page_action',
+            nonce: wshc_dashboard_obj.nonce,
+            page_action: action,
+            post_id: id
+        }, function(response) {
+            loadDynamicModule('pages');
+        });
+    });
+
+    $(document).on('click', '.item-action-btn', function(e) {
+        e.preventDefault();
+        if (!confirm('Are you sure?')) return;
+        const btn = $(this);
+        const action = btn.data('action');
+        const id = btn.data('id');
+        const module = btn.data('module');
+        $.post(wshc_dashboard_obj.ajaxurl, {
+            action: 'wshc_dashboard_item_action',
+            nonce: wshc_dashboard_obj.nonce,
+            item_action: action,
+            post_id: id,
+            module: module
+        }, function(response) {
+            loadDynamicModule(module);
+        });
+    });
 });

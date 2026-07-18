@@ -13,6 +13,146 @@ class DashboardManager {
         add_shortcode('wshc_dashboard', [$this, 'render_dashboard']);
         add_action('wp_enqueue_scripts', [$this, 'enqueue_dashboard_assets']);
         add_action('wp_ajax_wshc_revert_log', [$this, 'handle_revert_log']);
+        add_action('wp_ajax_wshc_dashboard_load_module', [$this, 'handle_load_module']);
+        add_action('wp_ajax_wshc_dashboard_page_action', [$this, 'handle_page_action']);
+        add_action('wp_ajax_wshc_dashboard_item_action', [$this, 'handle_item_action']);
+        add_action('wp_ajax_wshc_dashboard_restore_pages', [$this, 'handle_restore_pages']);
+    }
+
+    public function handle_restore_pages() {
+        check_ajax_referer('wshc_dashboard_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error();
+
+        \WSHC\Core\Activator::create_pages();
+        wp_send_json_success(['message' => 'Required system pages have been successfully restored.']);
+    }
+
+    public function handle_page_action() {
+        check_ajax_referer('wshc_dashboard_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error();
+
+        $action = sanitize_text_field($_POST['page_action']);
+        $post_id = intval($_POST['post_id']);
+
+        if ($action === 'delete') {
+            wp_delete_post($post_id, true);
+            wp_send_json_success(['message' => 'Page deleted.']);
+        } elseif ($action === 'publish') {
+            wp_update_post(['ID' => $post_id, 'post_status' => 'publish']);
+            wp_send_json_success(['message' => 'Page published.']);
+        } elseif ($action === 'unpublish') {
+            wp_update_post(['ID' => $post_id, 'post_status' => 'draft']);
+            wp_send_json_success(['message' => 'Page unpublished.']);
+        } elseif ($action === 'duplicate') {
+            $post = get_post($post_id);
+            if ($post) {
+                wp_insert_post([
+                    'post_title' => $post->post_title . ' (Copy)',
+                    'post_content' => $post->post_content,
+                    'post_status' => 'draft',
+                    'post_type' => 'page'
+                ]);
+                wp_send_json_success(['message' => 'Page duplicated.']);
+            }
+        }
+        wp_send_json_error(['message' => 'Invalid action.']);
+    }
+
+    public function handle_item_action() {
+        check_ajax_referer('wshc_dashboard_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error();
+
+        $action = sanitize_text_field($_POST['item_action']);
+        $post_id = intval($_POST['post_id']);
+        $module = sanitize_text_field($_POST['module']);
+
+        if ($module === 'messages') {
+            global $wpdb;
+            $table = $wpdb->prefix . 'wshc_contact_messages';
+            if ($action === 'delete') {
+                $wpdb->delete($table, ['id' => $post_id]);
+            } elseif ($action === 'read') {
+                $wpdb->update($table, ['status' => 'read'], ['id' => $post_id]);
+            }
+            wp_send_json_success(['message' => 'Message updated.']);
+        } else {
+            // Generic CPT actions (FAQ, Programs)
+            if ($action === 'delete') {
+                wp_delete_post($post_id, true);
+                wp_send_json_success(['message' => 'Item deleted.']);
+            } elseif ($action === 'publish') {
+                wp_update_post(['ID' => $post_id, 'post_status' => 'publish']);
+                wp_send_json_success(['message' => 'Item published.']);
+            } elseif ($action === 'unpublish') {
+                wp_update_post(['ID' => $post_id, 'post_status' => 'draft']);
+                wp_send_json_success(['message' => 'Item unpublished.']);
+            }
+        }
+        wp_send_json_error(['message' => 'Action failed.']);
+    }
+
+    public function handle_load_module() {
+        check_ajax_referer('wshc_dashboard_nonce', 'nonce');
+        if (!current_user_can('manage_options')) wp_send_json_error();
+
+        $module = sanitize_text_field($_POST['module']);
+        ob_start();
+
+        if ($module === 'pages') {
+            $pages = get_pages(['post_status' => ['publish', 'draft']]);
+            echo '<button class="button restore-pages-btn" style="margin-bottom:20px; padding:10px; background:#000; color:#fff; cursor:pointer;">Restore Missing System Pages</button>';
+            echo '<table class="wp-list-table widefat striped"><thead><tr><th>Title</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+            foreach ($pages as $p) {
+                echo '<tr>';
+                echo '<td>' . esc_html($p->post_title) . '</td>';
+                echo '<td>' . esc_html($p->post_status) . '</td>';
+                echo '<td><button class="button page-action-btn" data-id="'.$p->ID.'" data-action="publish">Publish</button> <button class="button page-action-btn" data-id="'.$p->ID.'" data-action="unpublish">Unpublish</button> <button class="button page-action-btn" data-id="'.$p->ID.'" data-action="duplicate">Duplicate</button> <button class="button page-action-btn" data-id="'.$p->ID.'" data-action="delete" style="color:red;">Delete</button></td>';
+                echo '</tr>';
+            }
+            echo '</tbody></table>';
+        } elseif ($module === 'programs' || $module === 'faq') {
+            $type = ($module === 'programs') ? 'wshc_program' : 'wshc_faq';
+            $posts = get_posts(['post_type' => $type, 'post_status' => ['publish', 'draft'], 'posts_per_page' => -1]);
+            echo '<table class="wp-list-table widefat striped"><thead><tr><th>Title</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+            foreach ($posts as $p) {
+                echo '<tr>';
+                echo '<td>' . esc_html($p->post_title) . '</td>';
+                echo '<td>' . esc_html($p->post_status) . '</td>';
+                echo '<td><button class="button item-action-btn" data-module="'.$module.'" data-id="'.$p->ID.'" data-action="publish">Publish</button> <button class="button item-action-btn" data-module="'.$module.'" data-id="'.$p->ID.'" data-action="unpublish">Unpublish</button> <button class="button item-action-btn" data-module="'.$module.'" data-id="'.$p->ID.'" data-action="delete" style="color:red;">Delete</button></td>';
+                echo '</tr>';
+            }
+            if (empty($posts)) echo '<tr><td colspan="3">No items found.</td></tr>';
+            echo '</tbody></table>';
+        } elseif ($module === 'messages') {
+            global $wpdb;
+            $table = $wpdb->prefix . 'wshc_contact_messages';
+            $messages = $wpdb->get_results("SELECT * FROM $table ORDER BY created_at DESC");
+            echo '<table class="wp-list-table widefat striped"><thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
+            foreach ($messages as $msg) {
+                echo '<tr>';
+                echo '<td>' . esc_html($msg->full_name) . '</td>';
+                echo '<td>' . esc_html($msg->email) . '</td>';
+                echo '<td>' . esc_html($msg->subject) . '</td>';
+                echo '<td>' . esc_html($msg->status) . '</td>';
+                echo '<td>' . esc_html($msg->created_at) . '</td>';
+                echo '<td><button class="button item-action-btn" data-module="messages" data-id="'.$msg->id.'" data-action="read">Mark Read</button> <button class="button item-action-btn" data-module="messages" data-id="'.$msg->id.'" data-action="delete" style="color:red;">Delete</button></td>';
+                echo '</tr>';
+            }
+            if (empty($messages)) echo '<tr><td colspan="6">No messages found.</td></tr>';
+            echo '</tbody></table>';
+        } else {
+            echo '<div style="padding:20px; background:#fff; border-radius:8px; border:1px solid #ddd;">';
+            echo '<h3 style="margin-top:0;">' . esc_html(ucwords(str_replace('-', ' ', $module))) . ' Hub</h3>';
+            echo '<p>Manage settings, configurations, and records for ' . esc_html(ucwords(str_replace('-', ' ', $module))) . ' directly from this unified interface.</p>';
+            echo '<div style="display:flex; gap:20px; margin-top:20px;">
+                    <div style="background:#f9f9f9; padding:20px; flex:1; border:1px solid #eee; border-radius:8px; text-align:center;"><h2 style="margin:0; font-size:36px;">0</h2><p style="margin:5px 0 0; color:#666;">Total Records</p></div>
+                    <div style="background:#f9f9f9; padding:20px; flex:1; border:1px solid #eee; border-radius:8px; text-align:center;"><h2 style="margin:0; font-size:36px; color:#4CAF50;">Active</h2><p style="margin:5px 0 0; color:#666;">System Status</p></div>
+                  </div>';
+            echo '</div>';
+        }
+
+        $html = ob_get_clean();
+        wp_send_json_success(['html' => $html]);
     }
 
     /**
