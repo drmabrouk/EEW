@@ -46,6 +46,10 @@ class Plugin {
         $this->research_manager = new \WSHC\Research\ResearchManager();
         $this->admin_menu = new \WSHC\Admin\AdminMenu();
         $this->profile_manager = new \WSHC\Memberships\ProfileManager();
+        $this->contact_manager = new \WSHC\Contact\ContactManager();
+        $this->program_manager = new \WSHC\Programs\ProgramManager();
+        $this->about_manager = new \WSHC\About\AboutManager();
+        $this->profile_editor = new \WSHC\Memberships\ProfileEditor();
     }
 
     /**
@@ -54,6 +58,8 @@ class Plugin {
     private function define_admin_hooks() {
         add_action('init', [$this->admin_menu, 'init']);
         add_action('admin_init', ['\WSHC\Core\Activator', 'create_pages']);
+        add_action('init', [$this->contact_manager, 'admin_init']);
+        add_action('init', [$this->profile_editor, 'init']);
     }
 
     /**
@@ -69,6 +75,9 @@ class Plugin {
         add_action('init', [$this->verification_manager, 'init']);
         add_action('init', [$this->research_manager, 'init']);
         add_action('init', [$this->profile_manager, 'init']);
+        add_action('init', [$this->contact_manager, 'init']);
+        add_action('init', [$this->program_manager, 'init']);
+        add_action('init', [$this->about_manager, 'init']);
     }
 
     /**

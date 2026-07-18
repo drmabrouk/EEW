@@ -114,6 +114,18 @@ class Activator {
                 'title'   => 'Scientific Research Engine & Repository',
                 'content' => '[wshc_scientific_engine]',
             ],
+            'contact' => [
+                'title'   => 'Contact Us',
+                'content' => '[wshc_contact_us]',
+            ],
+            'training' => [
+                'title'   => 'Training Programs',
+                'content' => '[wshc_training_programs]',
+            ],
+            'about' => [
+                'title'   => 'About Us',
+                'content' => '[wshc_about_us]',
+            ],
         ];
 
         foreach ($pages as $slug => $page_data) {
