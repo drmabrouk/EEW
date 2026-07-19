@@ -14,7 +14,7 @@ class ContactManager {
     }
 
     public function admin_init() {
-        add_action('admin_menu', [$this, 'register_admin_menu']);
+
     }
 
     public function register_cpts() {

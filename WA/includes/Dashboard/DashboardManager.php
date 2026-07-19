@@ -140,6 +140,27 @@ class DashboardManager {
             }
             if (empty($messages)) echo '<tr><td colspan="6">No messages found.</td></tr>';
             echo '</tbody></table>';
+        } elseif ($module === 'shortcodes') {
+            echo '<div class="wrap" style="background:#fff; padding:20px; border-radius:8px; border:1px solid #ddd;">';
+            echo '<h2>Available Shortcodes</h2>';
+            echo '<p>This page documents all available shortcodes integrated directly into your theme.</p>';
+            echo '<table class="wp-list-table widefat striped">';
+            echo '<thead><tr><th>Shortcode</th><th>Description</th></tr></thead>';
+            echo '<tbody>';
+            echo '<tr><td><code>[wshc_dashboard]</code></td><td>Displays the comprehensive member dashboard. Should be placed on the Dashboard page.</td></tr>';
+            echo '<tr><td><code>[wshc_login_form]</code></td><td>Displays the login form.</td></tr>';
+            echo '<tr><td><code>[wshc_registration_form]</code></td><td>Displays the registration form.</td></tr>';
+            echo '<tr><td><code>[wshc_forgot_password_form]</code></td><td>Displays the forgot password / password reset form.</td></tr>';
+            echo '<tr><td><code>[wshc_scientific_engine]</code></td><td>Displays the Scientific Research Engine & Repository.</td></tr>';
+            echo '<tr><td><code>[wshc_members_directory]</code></td><td>Displays the Official Members Directory.</td></tr>';
+            echo '<tr><td><code>[wshc_verification]</code></td><td>Displays the Verification Portal.</td></tr>';
+            echo '<tr><td><code>[wshc_contact_us]</code></td><td>Displays the Contact Us form and details.</td></tr>';
+            echo '<tr><td><code>[wshc_training_programs]</code></td><td>Displays published Training Programs.</td></tr>';
+            echo '<tr><td><code>[wshc_about_us]</code></td><td>Displays the standard About Us layout.</td></tr>';
+            echo '<tr><td><code>[wshc_faq]</code></td><td>Displays the FAQ accordion sections.</td></tr>';
+            echo '</tbody>';
+            echo '</table>';
+            echo '</div>';
         } else {
             echo '<div style="padding:20px; background:#fff; border-radius:8px; border:1px solid #ddd;">';
             echo '<h3 style="margin-top:0;">' . esc_html(ucwords(str_replace('-', ' ', $module))) . ' Hub</h3>';

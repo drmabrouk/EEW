@@ -4,7 +4,7 @@ namespace WSHC\Admin;
 
 class AdminMenu {
     public function init() {
-        add_action('admin_menu', [$this, 'register_menus']);
+
     }
 
     public function register_menus() {
