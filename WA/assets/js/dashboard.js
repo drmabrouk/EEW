@@ -1024,12 +1024,20 @@ jQuery(document).ready(function($) {
         $(this).addClass('active');
 
         // Check if it's a dynamic module
-        const staticSections = ['dashboard-overview', 'dashboard-users', 'dashboard-memberships', 'dashboard-my-profile', 'dashboard-settings', 'dashboard-audit'];
+        // Mapping targets to specific div IDs in layout.php
+        const staticMap = {
+            'dashboard-overview': 'section-dashboard-overview',
+            'dashboard-users': 'section-user-management',
+            'dashboard-memberships': 'section-membership-hub',
+            'dashboard-settings': 'section-settings-system',
+            'dashboard-research': 'section-research-submissions',
+            'dashboard-audit': 'section-audit' // Assuming it exists or we handle dynamically
+        };
 
-        if (staticSections.includes(target)) {
-            $('.dashboard-section').removeClass('active');
+        if (staticMap[target]) {
+            $('.dashboard-section').removeClass('active').hide();
             $('#dashboard-dynamic-container').hide();
-            $('#' + target).addClass('active').show();
+            $('#' + staticMap[target]).addClass('active').show();
         } else {
             $('.dashboard-section').removeClass('active').hide();
             $('#dashboard-dynamic-container').addClass('active').show();

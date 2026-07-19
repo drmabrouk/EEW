@@ -114,13 +114,13 @@ $design = get_option('wshc_design_settings', [
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link nav-btn" data-target="dashboard-shortcodes">
-                            <span class="nav-icon dashicons dashicons-shortcode"></span> Shortcodes
+                        <a href="#" class="nav-link nav-btn" data-target="dashboard-settings">
+                            <span class="nav-icon dashicons dashicons-admin-settings"></span> Settings
                         </a>
                     </li>
                     <li>
-                        <a href="#" class="nav-link nav-btn" data-target="dashboard-settings">
-                            <span class="nav-icon dashicons dashicons-admin-settings"></span> Settings
+                        <a href="#" class="nav-link nav-btn" data-target="dashboard-shortcodes">
+                            <span class="nav-icon dashicons dashicons-shortcode"></span> Shortcodes
                         </a>
                     </li>
                 <?php else : ?>
@@ -153,6 +153,11 @@ $design = get_option('wshc_design_settings', [
         <!-- Main Content -->
         <main class="wshc-content" id="wshc-main-content">
             <?php if (current_user_can('administrator')) : ?>
+
+                <div id="dashboard-dynamic-container" class="dashboard-section" style="display:none;">
+                    <div id="dynamic-content-area"></div>
+                </div>
+
                 <!-- Dashboard Overview Section -->
                 <div id="section-dashboard-overview" class="dashboard-section <?php echo $current_section === 'dashboard-overview' ? '' : 'hidden'; ?>">
                     <h1 class="section-title">DASHBOARD OVERVIEW</h1>
