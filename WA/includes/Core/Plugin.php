@@ -56,7 +56,7 @@ class Plugin {
      * Register hooks related to the admin area.
      */
     private function define_admin_hooks() {
-        add_action('init', [$this->admin_menu, 'init']);
+
         add_action('admin_init', ['\WSHC\Core\Activator', 'create_pages']);
         add_action('init', [$this->contact_manager, 'admin_init']);
         add_action('init', [$this->profile_editor, 'init']);
