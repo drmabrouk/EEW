@@ -69,32 +69,57 @@ $design = get_option('wshc_design_settings', [
             <ul class="nav-menu">
                 <?php if (current_user_can('administrator')) : ?>
                     <li>
-                        <a href="<?php echo esc_url(add_query_arg('section', 'dashboard-overview', $base_url)); ?>"
-                           class="nav-link <?php echo $current_section === 'dashboard-overview' ? 'active' : ''; ?>">
-                            <span class="nav-icon dashicons dashicons-dashboard"></span> Dashboard Overview
+                        <a href="#" class="nav-link nav-btn active" data-target="dashboard-overview">
+                            <span class="nav-icon dashicons dashicons-dashboard"></span> Ecosystem Overview
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo esc_url(add_query_arg('section', 'membership-hub', $base_url)); ?>"
-                           class="nav-link <?php echo $current_section === 'membership-hub' ? 'active' : ''; ?>">
+                        <a href="#" class="nav-link nav-btn" data-target="dashboard-pages">
+                            <span class="nav-icon dashicons dashicons-admin-page"></span> Pages
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link nav-btn" data-target="dashboard-memberships">
                             <span class="nav-icon dashicons dashicons-businessperson"></span> Memberships & Apps
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo esc_url(add_query_arg('section', 'user-management', $base_url)); ?>"
-                           class="nav-link <?php echo $current_section === 'user-management' ? 'active' : ''; ?>">
+                        <a href="#" class="nav-link nav-btn" data-target="dashboard-research">
+                            <span class="nav-icon dashicons dashicons-media-document"></span> Scientific Research
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link nav-btn" data-target="dashboard-programs">
+                            <span class="nav-icon dashicons dashicons-calendar-alt"></span> Training Programs
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link nav-btn" data-target="dashboard-messages">
+                            <span class="nav-icon dashicons dashicons-email"></span> Messages
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link nav-btn" data-target="dashboard-faq">
+                            <span class="nav-icon dashicons dashicons-editor-help"></span> FAQ
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link nav-btn" data-target="dashboard-users">
                             <span class="nav-icon dashicons dashicons-groups"></span> User Management
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo esc_url(add_query_arg('section', 'research-submissions', $base_url)); ?>"
-                           class="nav-link <?php echo $current_section === 'research-submissions' ? 'active' : ''; ?>">
-                            <span class="nav-icon dashicons dashicons-media-document"></span> Research Submissions
+                        <a href="#" class="nav-link nav-btn" data-target="dashboard-auth">
+                            <span class="nav-icon dashicons dashicons-lock"></span> Authentication
                         </a>
                     </li>
                     <li>
-                        <a href="<?php echo esc_url(add_query_arg('section', 'settings-system', $base_url)); ?>"
-                           class="nav-link <?php echo $current_section === 'settings-system' ? 'active' : ''; ?>">
+                        <a href="#" class="nav-link nav-btn" data-target="dashboard-shortcodes">
+                            <span class="nav-icon dashicons dashicons-shortcode"></span> Shortcodes
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="nav-link nav-btn" data-target="dashboard-settings">
                             <span class="nav-icon dashicons dashicons-admin-settings"></span> Settings
                         </a>
                     </li>
