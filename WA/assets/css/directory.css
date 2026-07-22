@@ -270,3 +270,25 @@
 
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* Grid Layout Upgrades */
+.researcher-card:hover {
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border-color: #ddd !important;
+}
+
+#wshc-directory-search:focus {
+    border-color: #000 !important;
+}
+
+#wshc-specialty-filter:focus, #wshc-country-filter:focus {
+    border-color: #000 !important;
+}
+
+input[type="checkbox"]#wshc-verified-only {
+    width: 16px;
+    height: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}

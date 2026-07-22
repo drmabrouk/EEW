@@ -123,14 +123,18 @@ body.healthedia-app-body {
     background: #fff;
     border: 1px solid #eaeaea;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     position: relative;
     transition: border-color 0.2s;
+    box-sizing: border-box;
+    padding: 0;
 }
 
 .icon-btn:hover {
