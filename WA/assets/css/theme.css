@@ -1,0 +1,374 @@
+/* Base Reset & Typography */
+body.healthedia-app-body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #ffffff;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.healthedia-layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.healthedia-main-content {
+    flex: 1;
+}
+
+/* Header Styles */
+.healthedia-global-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: #ffffff;
+    border-bottom: 1px solid #eaeaea;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+}
+
+.brand-logo {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-main {
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    color: #000;
+    line-height: 1;
+}
+
+.logo-sub {
+    font-size: 8px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #888;
+    margin-top: 3px;
+}
+
+.header-nav {
+    display: flex;
+    gap: 25px;
+}
+
+.header-nav .nav-item {
+    text-decoration: none;
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all 0.2s;
+}
+
+.header-nav .nav-item:hover {
+    color: #000;
+}
+
+.header-nav .nav-item.active {
+    background: #000;
+    color: #fff;
+    font-weight: 600;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.workspace-btn {
+    background: #3e0b0b;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    padding: 10px 20px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s;
+}
+
+.workspace-btn:hover {
+    background: #2a0707;
+}
+
+.workspace-btn .dashicons {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+}
+
+.user-controls {
+    display: flex;
+    gap: 12px;
+}
+
+.icon-btn {
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: border-color 0.2s;
+}
+
+.icon-btn:hover {
+    border-color: #ccc;
+}
+
+.icon-btn .dashicons {
+    color: #555;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.notification-dot {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 6px;
+    height: 6px;
+    background: #000;
+    border-radius: 50%;
+}
+
+.badge-count {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #000;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+/* Footer Styles */
+.healthedia-global-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 40px;
+    background: #ffffff;
+    border-top: 1px solid #eaeaea;
+    color: #888;
+    font-size: 13px;
+    margin-top: auto;
+}
+
+.footer-left p {
+    margin: 0;
+}
+
+.footer-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.footer-right a {
+    color: #888;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.footer-right a:hover {
+    color: #000;
+}
+
+.dot-separator {
+    color: #ddd;
+}
+
+/* Search Hero Styles */
+.healthedia-search-hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+    min-height: calc(100vh - 200px);
+}
+
+.hero-brand h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 64px;
+    font-weight: 700;
+    letter-spacing: -1px;
+    color: #000;
+    margin: 0;
+    line-height: 1;
+}
+
+.hero-subtitle {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    color: #888;
+    margin-top: 15px;
+    text-transform: uppercase;
+}
+
+.hero-divider {
+    width: 40px;
+    height: 3px;
+    background: #000;
+    margin: 25px auto;
+}
+
+.hero-description {
+    max-width: 600px;
+    margin: 0 auto 50px;
+    color: #888;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.search-form-container {
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 30px;
+}
+
+.healthedia-search-form {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.search-input-wrapper {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    border: 1px solid #ddd;
+    border-radius: 40px;
+    padding: 5px 15px 5px 25px;
+    background: #fff;
+    transition: box-shadow 0.3s, border-color 0.3s;
+}
+
+.search-input-wrapper:focus-within {
+    border-color: #aaa;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.search-icon {
+    color: #aaa;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    margin-right: 15px;
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 12px 0;
+    font-size: 16px;
+    color: #333;
+    font-family: 'Inter', sans-serif;
+    background: transparent;
+}
+
+.search-input::placeholder {
+    color: #bbb;
+}
+
+.search-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: 15px;
+}
+
+.icon-btn-small {
+    background: #f8f8f8;
+    border: 1px solid #eee;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #666;
+    transition: background 0.2s;
+}
+
+.icon-btn-small:hover {
+    background: #f0f0f0;
+}
+
+.search-submit-btn {
+    background: #000;
+    color: #fff;
+    border: none;
+    border-radius: 40px;
+    padding: 18px 35px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s;
+}
+
+.search-submit-btn:hover {
+    opacity: 0.9;
+}
+
+.trending-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    max-width: 900px;
+}
+
+.trending-tags .tag {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    color: #666;
+    border: 1px solid #eee;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.trending-tags .tag:hover {
+    background: #f8f8f8;
+    border-color: #ddd;
+    color: #000;
+}

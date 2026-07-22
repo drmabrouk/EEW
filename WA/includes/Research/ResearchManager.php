@@ -11,6 +11,7 @@ class ResearchManager {
      */
     public function init() {
         add_shortcode('wshc_scientific_engine', [$this, 'render_public_repository']);
+        add_shortcode('wshc_scientific_engine_home', [$this, 'render_homepage_search']);
 
         // Submission Pipeline
         add_action('wp_ajax_wshc_submit_research', [$this, 'handle_submission']);
@@ -211,6 +212,21 @@ class ResearchManager {
 
         ob_start();
         include WSHC_PLUGIN_DIR . 'templates/research/public-repo.php';
+        return ob_get_clean();
+    }
+
+    public function render_homepage_search() {
+        wp_enqueue_style('dashicons');
+        wp_enqueue_style('wshc-theme-style', WSHC_PLUGIN_URL . 'assets/css/theme.css', [], '1.0.0');
+        // If we want search to be interactive on the homepage, we enqueue research.js
+        wp_enqueue_script('wshc-research-js', WSHC_PLUGIN_URL . 'assets/js/research.js', ['jquery'], '1.1.0', true);
+        wp_localize_script('wshc-research-js', 'wshc_research_obj', [
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce'   => wp_create_nonce('wshc_dashboard_nonce')
+        ]);
+
+        ob_start();
+        include WSHC_PLUGIN_DIR . 'templates/research/search-home.php';
         return ob_get_clean();
     }
 
