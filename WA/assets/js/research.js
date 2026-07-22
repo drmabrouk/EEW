@@ -137,10 +137,15 @@ jQuery(document).ready(function($) {
     }
 
     // 4. Public Repository Search
-    $(document).on('click', '#trigger-repo-search', function() {
-        const btn = $(this);
+    function runResearchSearch() {
         const results = $('#repo-results-container');
+        if (!results.length) return;
 
+        let keywords = '';
+        if ($('#repo-keywords').length) keywords = $('#repo-keywords').val();
+        if ($('#search-keywords').length) keywords = $('#search-keywords').val(); // From Homepage Hero
+
+        const btn = $('#trigger-repo-search, .search-submit-btn');
         btn.prop('disabled', true).text('Searching...');
         results.css('opacity', '0.5');
 
@@ -150,20 +155,30 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'wshc_search_research',
                 nonce: wshc_research_obj.nonce,
-                keywords: $('#repo-keywords').val(),
-                author: $('#repo-author').val(),
-                date_start: $('#repo-date-start').val(),
-                date_end: $('#repo-date-end').val()
+                keywords: keywords,
+                author: $('#repo-author').length ? $('#repo-author').val() : '',
+                date_start: $('#repo-date-start').length ? $('#repo-date-start').val() : '',
+                date_end: $('#repo-date-end').length ? $('#repo-date-end').val() : ''
             },
             success: function(response) {
                 btn.prop('disabled', false).text('Search Records');
+                $('.search-submit-btn').text('SEARCH'); // Reset hero btn text
                 results.css('opacity', '1');
                 if (response.success) {
                     results.html(response.data.html || '<p style="text-align:center; padding:40px;">No records match your criteria.</p>');
                 }
             }
         });
-    });
+    }
+
+    $(document).on('click', '#trigger-repo-search', runResearchSearch);
+
+    // Auto-trigger search if URL params exist
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('keywords')) {
+        $('#repo-keywords').val(urlParams.get('keywords'));
+        runResearchSearch();
+    }
 
     $(document).on('click', '.download-pdf-btn', function() {
         const id = $(this).data('id');
