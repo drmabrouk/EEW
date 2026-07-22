@@ -50,6 +50,7 @@ class Plugin {
         $this->about_manager = new \WSHC\About\AboutManager();
         $this->profile_editor = new \WSHC\Memberships\ProfileEditor();
         $this->module_manager = new \WSHC\Core\ModuleManager();
+        $this->theme_manager = new \WSHC\Theme\ThemeManager();
     }
 
     /**
@@ -61,6 +62,7 @@ class Plugin {
         add_action('init', [$this->contact_manager, 'admin_init']);
         add_action('init', [$this->profile_editor, 'init']);
         add_action('init', [$this->module_manager, 'init']);
+        add_action('init', [$this->theme_manager, 'init']);
     }
 
     /**
