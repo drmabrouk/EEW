@@ -44,12 +44,12 @@ class Plugin {
         $this->membership_manager = new \WSHC\Memberships\MembershipManager();
         $this->verification_manager = new \WSHC\Memberships\VerificationManager();
         $this->research_manager = new \WSHC\Research\ResearchManager();
-        $this->admin_menu = new \WSHC\Admin\AdminMenu();
-        $this->profile_manager = new \WSHC\Memberships\ProfileManager();
+                $this->profile_manager = new \WSHC\Memberships\ProfileManager();
         $this->contact_manager = new \WSHC\Contact\ContactManager();
         $this->program_manager = new \WSHC\Programs\ProgramManager();
         $this->about_manager = new \WSHC\About\AboutManager();
         $this->profile_editor = new \WSHC\Memberships\ProfileEditor();
+        $this->module_manager = new \WSHC\Core\ModuleManager();
     }
 
     /**
@@ -60,6 +60,7 @@ class Plugin {
         add_action('admin_init', ['\WSHC\Core\Activator', 'create_pages']);
         add_action('init', [$this->contact_manager, 'admin_init']);
         add_action('init', [$this->profile_editor, 'init']);
+        add_action('init', [$this->module_manager, 'init']);
     }
 
     /**
