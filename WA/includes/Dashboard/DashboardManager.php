@@ -100,46 +100,88 @@ class DashboardManager {
 
         if ($module === 'pages') {
             $pages = get_pages(['post_status' => ['publish', 'draft']]);
-            echo '<button class="button restore-pages-btn" style="margin-bottom:20px; padding:10px; background:#000; color:#fff; cursor:pointer;">Restore Missing System Pages</button>';
-            echo '<table class="wp-list-table widefat striped"><thead><tr><th>Title</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+            echo '<div class="dashboard-module-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">';
+            echo '<h2 style="margin:0;">Site Pages Ledger</h2>';
+            echo '<button class="button restore-pages-btn" style="background:#000; color:#fff; border:none; padding:10px 20px; border-radius:4px; font-weight:bold; cursor:pointer;"><span class="dashicons dashicons-update"></span> Auto-Restore System Pages</button>';
+            echo '</div>';
+
+            echo '<div class="wshc-table-wrapper" style="background:#fff; border-radius:8px; border:1px solid #eaeaea; overflow:hidden;">';
+            echo '<table class="wp-list-table widefat striped" style="border:none; margin:0;">';
+            echo '<thead><tr><th style="padding:15px;">Page Title</th><th style="padding:15px;">Status</th><th style="padding:15px; text-align:right;">Actions Controls</th></tr></thead><tbody>';
             foreach ($pages as $p) {
+                $status_badge = ($p->post_status === 'publish') ? '<span style="background:#e8f5e9; color:#2e7d32; padding:3px 8px; border-radius:12px; font-size:12px; font-weight:bold;">Published</span>' : '<span style="background:#fff3e0; color:#f57c00; padding:3px 8px; border-radius:12px; font-size:12px; font-weight:bold;">Draft</span>';
                 echo '<tr>';
-                echo '<td>' . esc_html($p->post_title) . '</td>';
-                echo '<td>' . esc_html($p->post_status) . '</td>';
-                echo '<td><button class="button page-action-btn" data-id="'.$p->ID.'" data-action="publish">Publish</button> <button class="button page-action-btn" data-id="'.$p->ID.'" data-action="unpublish">Unpublish</button> <button class="button page-action-btn" data-id="'.$p->ID.'" data-action="duplicate">Duplicate</button> <button class="button page-action-btn" data-id="'.$p->ID.'" data-action="delete" style="color:red;">Delete</button></td>';
-                echo '</tr>';
+                echo '<td style="padding:15px; font-weight:bold;">' . esc_html($p->post_title) . '</td>';
+                echo '<td style="padding:15px;">' . $status_badge . '</td>';
+                echo '<td style="padding:15px; text-align:right;">';
+                if ($p->post_status !== 'publish') {
+                    echo '<button class="button page-action-btn" data-id="'.$p->ID.'" data-action="publish" title="Publish"><span class="dashicons dashicons-yes"></span></button> ';
+                } else {
+                    echo '<button class="button page-action-btn" data-id="'.$p->ID.'" data-action="unpublish" title="Draft"><span class="dashicons dashicons-hidden"></span></button> ';
+                }
+                echo '<button class="button page-action-btn" data-id="'.$p->ID.'" data-action="duplicate" title="Duplicate"><span class="dashicons dashicons-admin-page"></span></button> ';
+                echo '<button class="button page-action-btn" data-id="'.$p->ID.'" data-action="delete" style="color:#d32f2f;" title="Delete"><span class="dashicons dashicons-trash"></span></button>';
+                echo '</td></tr>';
             }
-            echo '</tbody></table>';
+            echo '</tbody></table></div>';
+
         } elseif ($module === 'programs' || $module === 'faq') {
             $type = ($module === 'programs') ? 'wshc_program' : 'wshc_faq';
+            $title = ($module === 'programs') ? 'Training Programs' : 'FAQ Entries';
             $posts = get_posts(['post_type' => $type, 'post_status' => ['publish', 'draft'], 'posts_per_page' => -1]);
-            echo '<table class="wp-list-table widefat striped"><thead><tr><th>Title</th><th>Status</th><th>Actions</th></tr></thead><tbody>';
+
+            echo '<div class="dashboard-module-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">';
+            echo '<h2 style="margin:0;">' . esc_html($title) . ' Data Ledger</h2>';
+            echo '</div>';
+
+            echo '<div class="wshc-table-wrapper" style="background:#fff; border-radius:8px; border:1px solid #eaeaea; overflow:hidden;">';
+            echo '<table class="wp-list-table widefat striped" style="border:none; margin:0;">';
+            echo '<thead><tr><th style="padding:15px;">Title</th><th style="padding:15px;">Visibility</th><th style="padding:15px; text-align:right;">Registry Actions</th></tr></thead><tbody>';
             foreach ($posts as $p) {
+                $status_badge = ($p->post_status === 'publish') ? '<span style="background:#e8f5e9; color:#2e7d32; padding:3px 8px; border-radius:12px; font-size:12px; font-weight:bold;">Active</span>' : '<span style="background:#fff3e0; color:#f57c00; padding:3px 8px; border-radius:12px; font-size:12px; font-weight:bold;">Archived</span>';
                 echo '<tr>';
-                echo '<td>' . esc_html($p->post_title) . '</td>';
-                echo '<td>' . esc_html($p->post_status) . '</td>';
-                echo '<td><button class="button item-action-btn" data-module="'.$module.'" data-id="'.$p->ID.'" data-action="publish">Publish</button> <button class="button item-action-btn" data-module="'.$module.'" data-id="'.$p->ID.'" data-action="unpublish">Unpublish</button> <button class="button item-action-btn" data-module="'.$module.'" data-id="'.$p->ID.'" data-action="delete" style="color:red;">Delete</button></td>';
-                echo '</tr>';
+                echo '<td style="padding:15px; font-weight:bold;">' . esc_html($p->post_title) . '</td>';
+                echo '<td style="padding:15px;">' . $status_badge . '</td>';
+                echo '<td style="padding:15px; text-align:right;">';
+                if ($p->post_status !== 'publish') {
+                    echo '<button class="button item-action-btn" data-module="'.$module.'" data-id="'.$p->ID.'" data-action="publish" title="Publish"><span class="dashicons dashicons-yes-alt"></span></button> ';
+                } else {
+                    echo '<button class="button item-action-btn" data-module="'.$module.'" data-id="'.$p->ID.'" data-action="unpublish" title="Archive"><span class="dashicons dashicons-archive"></span></button> ';
+                }
+                echo '<button class="button item-action-btn" data-module="'.$module.'" data-id="'.$p->ID.'" data-action="delete" style="color:#d32f2f;" title="Purge"><span class="dashicons dashicons-trash"></span></button>';
+                echo '</td></tr>';
             }
-            if (empty($posts)) echo '<tr><td colspan="3">No items found.</td></tr>';
-            echo '</tbody></table>';
+            if (empty($posts)) echo '<tr><td colspan="3" style="padding:30px; text-align:center; color:#888;">Registry is currently empty.</td></tr>';
+            echo '</tbody></table></div>';
+
         } elseif ($module === 'messages') {
             global $wpdb;
             $table = $wpdb->prefix . 'wshc_contact_messages';
             $messages = $wpdb->get_results("SELECT * FROM $table ORDER BY created_at DESC");
-            echo '<table class="wp-list-table widefat striped"><thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
+
+            echo '<div class="dashboard-module-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">';
+            echo '<h2 style="margin:0;">Support Communications Inbox</h2>';
+            echo '</div>';
+
+            echo '<div class="wshc-table-wrapper" style="background:#fff; border-radius:8px; border:1px solid #eaeaea; overflow:hidden;">';
+            echo '<table class="wp-list-table widefat striped" style="border:none; margin:0;">';
+            echo '<thead><tr><th style="padding:15px;">Sender</th><th style="padding:15px;">Subject</th><th style="padding:15px;">Status</th><th style="padding:15px;">Timestamp</th><th style="padding:15px; text-align:right;">Actions</th></tr></thead><tbody>';
             foreach ($messages as $msg) {
-                echo '<tr>';
-                echo '<td>' . esc_html($msg->full_name) . '</td>';
-                echo '<td>' . esc_html($msg->email) . '</td>';
-                echo '<td>' . esc_html($msg->subject) . '</td>';
-                echo '<td>' . esc_html($msg->status) . '</td>';
-                echo '<td>' . esc_html($msg->created_at) . '</td>';
-                echo '<td><button class="button item-action-btn" data-module="messages" data-id="'.$msg->id.'" data-action="read">Mark Read</button> <button class="button item-action-btn" data-module="messages" data-id="'.$msg->id.'" data-action="delete" style="color:red;">Delete</button></td>';
-                echo '</tr>';
+                $status_badge = ($msg->status === 'unread') ? '<span style="background:#e3f2fd; color:#1565c0; padding:3px 8px; border-radius:12px; font-size:12px; font-weight:bold;">Unread</span>' : '<span style="background:#f5f5f5; color:#757575; padding:3px 8px; border-radius:12px; font-size:12px; font-weight:bold;">Read</span>';
+                echo '<tr style="'.($msg->status === 'unread' ? 'background:#fbfdff;' : '').'">';
+                echo '<td style="padding:15px;"><strong>' . esc_html($msg->full_name) . '</strong><br><small style="color:#666;">' . esc_html($msg->email) . '</small></td>';
+                echo '<td style="padding:15px;">' . esc_html($msg->subject) . '</td>';
+                echo '<td style="padding:15px;">' . $status_badge . '</td>';
+                echo '<td style="padding:15px;">' . esc_html($msg->created_at) . '</td>';
+                echo '<td style="padding:15px; text-align:right;">';
+                if ($msg->status === 'unread') {
+                    echo '<button class="button item-action-btn" data-module="messages" data-id="'.$msg->id.'" data-action="read" title="Mark Read"><span class="dashicons dashicons-yes"></span></button> ';
+                }
+                echo '<button class="button item-action-btn" data-module="messages" data-id="'.$msg->id.'" data-action="delete" style="color:#d32f2f;" title="Delete"><span class="dashicons dashicons-trash"></span></button>';
+                echo '</td></tr>';
             }
-            if (empty($messages)) echo '<tr><td colspan="6">No messages found.</td></tr>';
-            echo '</tbody></table>';
+            if (empty($messages)) echo '<tr><td colspan="5" style="padding:30px; text-align:center; color:#888;">Inbox is currently clear.</td></tr>';
+            echo '</tbody></table></div>';
         } elseif ($module === 'shortcodes') {
             echo '<div class="wrap" style="background:#fff; padding:20px; border-radius:8px; border:1px solid #ddd;">';
             echo '<h2>Available Shortcodes</h2>';
@@ -162,14 +204,43 @@ class DashboardManager {
             echo '</table>';
             echo '</div>';
         } else {
-            echo '<div style="padding:20px; background:#fff; border-radius:8px; border:1px solid #ddd;">';
-            echo '<h3 style="margin-top:0;">' . esc_html(ucwords(str_replace('-', ' ', $module))) . ' Hub</h3>';
-            echo '<p>Manage settings, configurations, and records for ' . esc_html(ucwords(str_replace('-', ' ', $module))) . ' directly from this unified interface.</p>';
-            echo '<div style="display:flex; gap:20px; margin-top:20px;">
-                    <div style="background:#f9f9f9; padding:20px; flex:1; border:1px solid #eee; border-radius:8px; text-align:center;"><h2 style="margin:0; font-size:36px;">0</h2><p style="margin:5px 0 0; color:#666;">Total Records</p></div>
-                    <div style="background:#f9f9f9; padding:20px; flex:1; border:1px solid #eee; border-radius:8px; text-align:center;"><h2 style="margin:0; font-size:36px; color:#4CAF50;">Active</h2><p style="margin:5px 0 0; color:#666;">System Status</p></div>
-                  </div>';
-            echo '</div>';
+            // Dynamic resolution for the newly registered 33 modules
+            $module_key = 'wshc_' . str_replace('-', '_', $module);
+            $module_mgr = new \WSHC\Core\ModuleManager();
+            $modules = $module_mgr->get_modules();
+
+            if (array_key_exists($module_key, $modules)) {
+                $title = $modules[$module_key]['name'];
+                $posts = get_posts(['post_type' => $module_key, 'post_status' => ['publish', 'draft'], 'posts_per_page' => -1]);
+
+                echo '<div class="dashboard-module-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">';
+                echo '<h2 style="margin:0;">' . esc_html($title) . ' Management</h2>';
+                echo '<button class="button" style="background:#000; color:#fff; border:none; padding:10px 20px; border-radius:4px; font-weight:bold; cursor:pointer;"><span class="dashicons dashicons-plus"></span> Add New Record</button>';
+                echo '</div>';
+
+                echo '<div class="wshc-table-wrapper" style="background:#fff; border-radius:8px; border:1px solid #eaeaea; overflow:hidden;">';
+                echo '<table class="wp-list-table widefat striped" style="border:none; margin:0;">';
+                echo '<thead><tr><th style="padding:15px;">Title</th><th style="padding:15px;">Status</th><th style="padding:15px; text-align:right;">Actions</th></tr></thead><tbody>';
+                foreach ($posts as $p) {
+                    $status_badge = ($p->post_status === 'publish') ? '<span style="background:#e8f5e9; color:#2e7d32; padding:3px 8px; border-radius:12px; font-size:12px; font-weight:bold;">Active</span>' : '<span style="background:#fff3e0; color:#f57c00; padding:3px 8px; border-radius:12px; font-size:12px; font-weight:bold;">Archived</span>';
+                    echo '<tr>';
+                    echo '<td style="padding:15px; font-weight:bold;">' . esc_html($p->post_title) . '</td>';
+                    echo '<td style="padding:15px;">' . $status_badge . '</td>';
+                    echo '<td style="padding:15px; text-align:right;">';
+                    if ($p->post_status !== 'publish') {
+                        echo '<button class="button item-action-btn" data-module="'.$module.'" data-id="'.$p->ID.'" data-action="publish" title="Publish"><span class="dashicons dashicons-yes-alt"></span></button> ';
+                    } else {
+                        echo '<button class="button item-action-btn" data-module="'.$module.'" data-id="'.$p->ID.'" data-action="unpublish" title="Archive"><span class="dashicons dashicons-archive"></span></button> ';
+                    }
+                    echo '<button class="button item-action-btn" data-module="'.$module.'" data-id="'.$p->ID.'" data-action="delete" style="color:#d32f2f;" title="Delete"><span class="dashicons dashicons-trash"></span></button>';
+                    echo '</td></tr>';
+                }
+                if (empty($posts)) echo '<tr><td colspan="3" style="padding:30px; text-align:center; color:#888;">The ' . esc_html($title) . ' registry is currently empty. Click "Add New Record" to begin.</td></tr>';
+                echo '</tbody></table></div>';
+            } else {
+                // Failsafe for entirely unknown routes
+                echo '<div class="notice notice-error"><p>Module handler not found for route: ' . esc_html($module) . '</p></div>';
+            }
         }
 
         $html = ob_get_clean();

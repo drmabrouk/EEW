@@ -1047,19 +1047,51 @@ jQuery(document).ready(function($) {
 
     function loadDynamicModule(module) {
         const container = $('#dynamic-content-area');
-        container.html('<p>Loading module...</p>');
-        $.post(wshc_dashboard_obj.ajaxurl, {
-            action: 'wshc_dashboard_load_module',
-            nonce: wshc_dashboard_obj.nonce,
-            module: module
-        }, function(response) {
-            if (response.success) {
-                container.html(response.data.html);
-            } else {
-                container.html('<p>Error loading module.</p>');
+
+        // Professional Loading State
+        container.html(`
+            <div style="padding: 40px; text-align: center; color: #666;">
+                <span class="dashicons dashicons-update spin" style="font-size: 30px; width: 30px; height: 30px; margin-bottom: 15px;"></span>
+                <p>Loading module interface...</p>
+            </div>
+        `);
+
+        $.ajax({
+            url: wshc_dashboard_obj.ajaxurl,
+            type: 'POST',
+            data: {
+                action: 'wshc_dashboard_load_module',
+                nonce: wshc_dashboard_obj.nonce,
+                module: module
+            },
+            success: function(response) {
+                if (response.success) {
+                    container.hide().html(response.data.html).fadeIn(200);
+                } else {
+                    renderModuleError(container, module, response.data?.message || 'Server returned an invalid response.');
+                }
+            },
+            error: function() {
+                renderModuleError(container, module, 'Network connection failed or server is unreachable.');
             }
         });
     }
+
+    function renderModuleError(container, module, message) {
+        container.hide().html(`
+            <div style="padding: 40px; text-align: center; border: 1px solid #ffcdd2; background: #fff8f8; border-radius: 8px;">
+                <span class="dashicons dashicons-warning" style="font-size: 40px; width: 40px; height: 40px; color: #d32f2f; margin-bottom: 15px;"></span>
+                <h3 style="color: #d32f2f; margin-top: 0;">Failed to Load Module</h3>
+                <p style="color: #666; margin-bottom: 20px;">${message}</p>
+                <button class="button retry-module-btn" data-module="${module}" style="background: #000; color: #fff; border: none; padding: 10px 20px;">Retry Connection</button>
+            </div>
+        `).fadeIn(200);
+    }
+
+    $(document).on('click', '.retry-module-btn', function(e) {
+        e.preventDefault();
+        loadDynamicModule($(this).data('module'));
+    });
 
     $(document).on('click', '.restore-pages-btn', function(e) {
         e.preventDefault();

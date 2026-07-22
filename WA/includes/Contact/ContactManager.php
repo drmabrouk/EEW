@@ -30,72 +30,7 @@ class ContactManager {
         ]);
     }
 
-    public function register_admin_menu() {
-        add_menu_page(
-            'Messages',
-            'Messages',
-            'manage_options',
-            'wshc_contact_messages',
-            [$this, 'render_messages_page'],
-            'dashicons-email',
-            25
-        );
-    }
-
-    public function render_messages_page() {
-        if (!current_user_can('manage_options')) {
-            return;
-        }
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'wshc_contact_messages';
-
-        $action = $_GET['action'] ?? '';
-        $id = intval($_GET['id'] ?? 0);
-
-        if ($id) {
-            if ($action === 'delete') {
-                check_admin_referer('delete_message_' . $id);
-                $wpdb->delete($table_name, ['id' => $id]);
-                echo '<div class="notice notice-success"><p>Message deleted.</p></div>';
-            } elseif ($action === 'view') {
-                check_admin_referer('view_message_' . $id);
-                $wpdb->update($table_name, ['status' => 'read'], ['id' => $id]);
-                $msg = $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE id = %d", $id));
-                if ($msg) {
-                    echo '<div class="wrap"><h1>View Message</h1>';
-                    echo '<p><strong>From:</strong> ' . esc_html($msg->full_name) . ' (' . esc_html($msg->email) . ')</p>';
-                    echo '<p><strong>Subject:</strong> ' . esc_html($msg->subject) . '</p>';
-                    echo '<p><strong>Date:</strong> ' . esc_html($msg->created_at) . '</p>';
-                    echo '<hr><p>' . nl2br(esc_html($msg->message)) . '</p>';
-                    echo '<a href="?page=wshc_contact_messages" class="button">Back to Messages</a></div>';
-                    return;
-                }
-            }
-        }
-
-        require_once WSHC_PLUGIN_DIR . 'includes/Contact/MessagesListTable.php';
-        $list_table = new MessagesListTable();
-        $list_table->prepare_items();
-
-        echo '<div class="wrap"><h1>Contact Messages</h1>';
-        echo '<form method="get">';
-        echo '<input type="hidden" name="page" value="' . esc_attr($_REQUEST['page']) . '" />';
-        echo '<div class="tablenav top">';
-        echo '<div class="alignleft actions">';
-        echo '<select name="filter_status">';
-        echo '<option value="">All Statuses</option>';
-        $selected_unread = (isset($_REQUEST['filter_status']) && $_REQUEST['filter_status'] === 'unread') ? 'selected' : '';
-        $selected_read = (isset($_REQUEST['filter_status']) && $_REQUEST['filter_status'] === 'read') ? 'selected' : '';
-        echo '<option value="unread" ' . $selected_unread . '>Unread</option>';
-        echo '<option value="read" ' . $selected_read . '>Read</option>';
-        echo '</select>';
-        echo '<input type="submit" class="button" value="Filter">';
-        echo '</div>';
-        echo '</div>';
-        $list_table->search_box('Search Messages', 's');
-        $list_table->display();
-        echo '</form></div>';
-    }
+    // Dead code removed. Messages are managed inside the frontend [wshc_dashboard] shortcode hub.
 
     public function render_contact_page() {
         wp_enqueue_script('wshc-contact-js', WSHC_PLUGIN_URL . 'assets/js/contact.js', ['jquery'], '1.0.0', true);
