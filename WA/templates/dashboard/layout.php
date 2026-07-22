@@ -118,11 +118,7 @@ $design = get_option('wshc_design_settings', [
                             <span class="nav-icon dashicons dashicons-admin-settings"></span> Settings
                         </a>
                     </li>
-                    <li>
-                        <a href="#" class="nav-link nav-btn" data-target="dashboard-shortcodes">
-                            <span class="nav-icon dashicons dashicons-shortcode"></span> Shortcodes
-                        </a>
-                    </li>
+
                 <?php else : ?>
                     <li>
                         <a href="<?php echo esc_url(add_query_arg('section', 'my-account', $base_url)); ?>"
@@ -246,6 +242,9 @@ $design = get_option('wshc_design_settings', [
                 <!-- Unified Settings Section -->
                 <div id="section-settings-system" class="dashboard-section <?php echo $current_section === 'settings-system' ? '' : 'hidden'; ?>">
                     <h1 class="section-title">SYSTEM SETTINGS</h1>
+                    <div style="margin-bottom: 20px;">
+                        <button class="button nav-btn" data-target="dashboard-shortcodes" style="background:#0073aa; color:#fff; border:none; padding:8px 15px; border-radius:4px; font-weight:bold; cursor:pointer;"><span class="dashicons dashicons-shortcode" style="margin-top:3px;"></span> View Shortcodes Reference</button>
+                    </div>
 
                     <div class="settings-tabs">
                         <button class="settings-tab active" data-tab="design-settings">Design Settings</button>

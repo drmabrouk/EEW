@@ -1056,13 +1056,27 @@ jQuery(document).ready(function($) {
             </div>
         `);
 
+        let searchQuery = '';
+        let statusFilter = '';
+
+        // If the call was triggered from within an already loaded module (pagination, search, filter)
+        // we extract the current values to persist state
+        if ($('#module-search-input').length) {
+            searchQuery = $('#module-search-input').val();
+        }
+        if ($('#module-status-filter').length) {
+            statusFilter = $('#module-status-filter').val();
+        }
+
         $.ajax({
             url: wshc_dashboard_obj.ajaxurl,
             type: 'POST',
             data: {
                 action: 'wshc_dashboard_load_module',
                 nonce: wshc_dashboard_obj.nonce,
-                module: module
+                module: module,
+                search: searchQuery,
+                status: statusFilter
             },
             success: function(response) {
                 if (response.success) {
@@ -1087,6 +1101,21 @@ jQuery(document).ready(function($) {
             </div>
         `).fadeIn(200);
     }
+
+
+    // Trigger Search & Filter for Modules
+    $(document).on('click', '.trigger-module-search-btn', function(e) {
+        e.preventDefault();
+        const module = $(this).data('module');
+        loadDynamicModule(module);
+    });
+
+    $(document).on('keypress', '#module-search-input', function(e) {
+        if (e.which == 13) { // Enter key
+            e.preventDefault();
+            $('.trigger-module-search-btn').click();
+        }
+    });
 
     $(document).on('click', '.retry-module-btn', function(e) {
         e.preventDefault();
