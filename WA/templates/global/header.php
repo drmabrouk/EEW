@@ -5,8 +5,8 @@
             <span class="logo-sub">GLOBAL HEALTH ARCHIVE</span>
         </div>
         <nav class="header-nav">
-            <a href="#" class="nav-item active">Archive Search</a>
-            <a href="#" class="nav-item">Researchers</a>
+            <a href="<?php echo esc_url(home_url('/research')); ?>" class="nav-item <?php echo is_page('research') || is_front_page() ? 'active' : ''; ?>">Archive Search</a>
+            <a href="<?php echo esc_url(home_url('/directory')); ?>" class="nav-item <?php echo is_page('directory') ? 'active' : ''; ?>">Researchers</a>
             <a href="#" class="nav-item">Institutions</a>
             <a href="#" class="nav-item">Scientific Journal</a>
         </nav>

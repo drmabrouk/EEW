@@ -56,6 +56,9 @@ class ProfileManager {
                     // Locate and load custom profile template
                     $profile_template = WSHC_PLUGIN_DIR . 'templates/portal/member-profile.php';
                     if (file_exists($profile_template)) {
+                        global $wp_query;
+                        $wp_query->is_404 = false;
+                        status_header(200);
                         return $profile_template;
                     }
                 }

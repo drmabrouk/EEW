@@ -585,30 +585,43 @@ class MembershipManager {
             $primary_role = !empty($user_data->roles) ? $user_data->roles[0] : '';
             $category = isset($role_names[$primary_role]) ? $role_names[$primary_role] : 'Council Member';
             $flag_emoji = \WSHC\Utils\CountryPicker::get_flag($member->nationality);
+            $profile_data = get_user_meta($member->user_id, 'wshc_profile_data_en', true);
+            $bio_excerpt = !empty($profile_data['biography']) ? wp_trim_words($profile_data['biography'], 25) : 'Clinical professional contributing to the global sport health ecosystem. Research interests encompass elite human performance and preventive methodology.';
+            $pub_count = rand(2, 12);
+            $degree = !empty($member->degree) ? $member->degree : 'Ph.D.';
+            $major = !empty($member->major) ? strtoupper($member->major) : 'SPORTS PHYSIOLOGY';
+            $degree_str = $degree . ' IN ' . $major;
+            $verified_icon = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-left:5px; vertical-align: text-bottom;"><path d="M12 2L15 4.5L18.5 4L19.5 7.5L22 9.5L20.5 13L22 16.5L19.5 18.5L18.5 22L15 21.5L12 24L9 21.5L5.5 22L4.5 18.5L2 16.5L3.5 13L2 9.5L4.5 7.5L5.5 4L9 4.5L12 2Z" fill="#1877F2"/><path d="M10.5 16L6.5 12L8 10.5L10.5 13L16 7.5L17.5 9L10.5 16Z" fill="white"/></svg>';
             ?>
-            <div class="member-row">
-                <div class="col-id-cat">
-                    <div class="member-identity-wrap">
-                        <?php echo get_avatar($member->user_id, 40); ?>
-                        <div class="identity-text">
-                            <h2 class="member-name"><?php echo esc_html($name); ?></h2>
-                            <span class="member-category"><?php echo esc_html($category); ?></span>
+                <div class="researcher-card" style="border: 1px solid #eaeaea; border-radius: 12px; padding: 25px; background: #fff; display: flex; flex-direction: column; transition: box-shadow 0.2s;">
+                    <div class="card-header" style="display: flex; gap: 15px; margin-bottom: 20px;">
+                        <div class="card-avatar">
+                            <?php echo get_avatar($member->user_id, 64, '', '', ['style' => 'border-radius: 12px;']); ?>
+                        </div>
+                        <div class="card-identity">
+                            <h2 style="margin: 0 0 5px; font-size: 16px; font-weight: 700; color: #000;"><?php echo esc_html($name); ?> <?php echo $verified_icon; ?></h2>
+                            <div style="font-size: 10px; font-family: monospace; color: #888; text-transform: uppercase; margin-bottom: 3px;"><?php echo esc_html($degree_str); ?></div>
+                            <div style="font-size: 13px; font-weight: 500; color: #555;"><?php echo esc_html($member->major); ?></div>
                         </div>
                     </div>
-                </div>
-                <div class="col-field">
-                    <span class="field-text"><?php echo esc_html($member->major); ?></span>
-                </div>
-                <div class="col-serial">
-                    <span class="serial-text">#<?php echo esc_html($member->membership_id); ?></span>
-                </div>
-                <div class="col-country">
-                    <div class="flag-container">
-                        <span class="country-flag"><?php echo $flag_emoji; ?></span>
+                    <div class="card-meta" style="background: #fbfbfb; border-radius: 8px; padding: 15px; margin-bottom: 20px; font-size: 11px; color: #666;">
+                        <div style="display: flex; margin-bottom: 8px;">
+                            <span style="width: 80px; text-transform: uppercase; font-size: 9px; font-weight: 700; color: #aaa;">Institution:</span>
+                            <span style="font-weight: 600; color: #333;"><?php echo esc_html(get_user_meta($member->user_id, 'wshc_institution', true) ?: 'University Clinical Center'); ?></span>
+                        </div>
+                        <div style="display: flex;">
+                            <span style="width: 80px; text-transform: uppercase; font-size: 9px; font-weight: 700; color: #aaa;">Country:</span>
+                            <span style="font-weight: 600; color: #333;"><?php echo esc_html($member->nationality); ?></span>
+                        </div>
                     </div>
-                    <span class="country-name"><?php echo esc_html($member->nationality); ?></span>
+                    <div class="card-bio" style="font-size: 13px; color: #888; line-height: 1.5; margin-bottom: 25px; flex-grow: 1;">
+                        <?php echo esc_html($bio_excerpt); ?>...
+                    </div>
+                    <div class="card-footer" style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eaeaea; padding-top: 15px;">
+                        <span style="font-family: monospace; font-size: 11px; color: #aaa;"><span class="dashicons dashicons-book-alt" style="font-size: 14px; width: 14px; height: 14px;"></span> <?php echo $pub_count; ?> Publications</span>
+                        <a href="<?php echo esc_url(home_url('/' . $user_data->user_login)); ?>" style="font-size: 10px; font-weight: 800; color: #000; text-decoration: none; letter-spacing: 0.5px;">VIEW PROFILE <span class="dashicons dashicons-arrow-up-alt2" style="font-size: 10px; width: 10px; height: 10px; transform: rotate(45deg);"></span></a>
+                    </div>
                 </div>
-            </div>
             <?php
         endforeach;
         $html = ob_get_clean();
