@@ -25,7 +25,7 @@ class ProfileManager {
         $username = get_query_var('wshc_member_profile');
         if (!empty($username)) {
             // Exclude common page slugs and default WP structures to prevent conflicts
-            $reserved_slugs = ['login', 'id', 'verify', 'directory', 'research', 'wp-admin', 'wp-login.php'];
+            $reserved_slugs = ['login', 'id', 'verify', 'directory', 'institutions', 'research', 'wp-admin', 'wp-login.php'];
             if (in_array($username, $reserved_slugs)) {
                 return $template;
             }

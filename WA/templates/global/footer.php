@@ -3,14 +3,12 @@
         <p>&copy; <?php echo date('Y'); ?> Healthedia. All Rights Reserved. Permanent Open-Access Repository.</p>
     </div>
     <div class="footer-right">
-        <a href="#">Privacy Policy</a>
+        <a href="<?php echo esc_url(home_url('/legal')); ?>">Privacy Policy & Legal</a>
         <span class="dot-separator">&bull;</span>
-        <a href="#">Terms & Conditions</a>
+        <a href="<?php echo esc_url(home_url('/legal')); ?>">Publication Policies</a>
         <span class="dot-separator">&bull;</span>
-        <a href="#">Publication Policies</a>
+        <a href="<?php echo esc_url(home_url('/verify')); ?>">Certificate Verification</a>
         <span class="dot-separator">&bull;</span>
-        <a href="#">Certificate Verification</a>
-        <span class="dot-separator">&bull;</span>
-        <a href="#">Support</a>
+        <a href="<?php echo esc_url(home_url('/contact')); ?>">Support</a>
     </div>
 </footer>

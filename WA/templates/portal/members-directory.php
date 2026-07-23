@@ -1,14 +1,21 @@
 <div class="wshc-public-directory-portal" style="max-width: 1200px; margin: 40px auto; padding: 0 20px; font-family: 'Inter', sans-serif;">
 
     <!-- Directory Header -->
-    <div class="directory-header" style="margin-bottom: 40px;">
-        <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #000; margin-bottom: 10px;">GLOBAL DIRECTORY OF RESEARCHERS</h1>
-        <p style="color: #888; font-size: 16px;">An authoritative indexed archive of verified clinical specialists, biomechanical researchers, and academic authors.</p>
+    <div class="directory-header" style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+            <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 32px; font-weight: 700; color: #000; margin-bottom: 10px;">GLOBAL DIRECTORY OF RESEARCHERS</h1>
+            <p style="color: #888; font-size: 16px;">An authoritative indexed archive of verified clinical specialists, biomechanical researchers, and academic authors.</p>
+        </div>
+        <?php if (current_user_can('administrator')) : ?>
+        <button id="admin-add-member-btn" style="background: #000; color: #fff; border: none; padding: 12px 24px; font-size: 12px; font-weight: 700; border-radius: 8px; cursor: pointer; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;">
+            <span class="dashicons dashicons-plus" style="font-size: 16px; width: 16px; height: 16px;"></span> ADD MEMBER
+        </button>
+        <?php endif; ?>
     </div>
 
     <!-- Advanced Filter Bar -->
     <div class="directory-filter-bar" style="display: flex; gap: 20px; margin-bottom: 25px; border-top: 1px solid #eaeaea; border-bottom: 1px solid #eaeaea; padding: 25px 0;">
-        <div class="search-input-wrapper" style="flex: 2; position: relative;">
+        <div class="search-input-wrapper" style="flex: 2; position: relative; border: none; padding: 0; background: transparent; border-radius: 0;">
             <span class="dashicons dashicons-search" style="position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #aaa;"></span>
             <input type="text" id="wshc-directory-search" placeholder="Search name, country or specialty..." autocomplete="off" style="width: 100%; box-sizing: border-box; padding: 12px 15px 12px 45px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; outline: none;">
         </div>
@@ -101,3 +108,38 @@
         <button id="wshc-load-more" class="button" style="background: transparent; color: #000; border: 1px solid #000; padding: 10px 30px; font-weight: 600; border-radius: 4px; cursor: pointer;">Load More Researchers</button>
     </div>
 </div>
+
+<?php if (current_user_can('administrator')) : ?>
+<!-- Admin Add Member Modal -->
+<div id="admin-add-member-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+    <div style="background: #fff; padding: 30px; border-radius: 12px; width: 100%; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.2);">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h3 style="margin: 0; font-size: 20px; font-weight: 700;">Add New Member</h3>
+            <button class="close-modal" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+        </div>
+        <form id="admin-add-member-form">
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">Username</label>
+                <input type="text" name="username" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">Email</label>
+                <input type="email" name="email" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">Full Name</label>
+                <input type="text" name="full_name" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">Specialty</label>
+                <input type="text" name="specialty" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px;">Password</label>
+                <input type="password" name="password" required style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <button type="submit" style="width: 100%; background: #000; color: #fff; border: none; padding: 12px; border-radius: 4px; font-weight: 700; cursor: pointer;">CREATE MEMBER & PUBLISH</button>
+        </form>
+    </div>
+</div>
+<?php endif; ?>

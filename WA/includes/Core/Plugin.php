@@ -48,6 +48,7 @@ class Plugin {
         $this->contact_manager = new \WSHC\Contact\ContactManager();
         $this->program_manager = new \WSHC\Programs\ProgramManager();
         $this->about_manager = new \WSHC\About\AboutManager();
+        $this->legal_manager = new \WSHC\About\LegalManager();
         $this->profile_editor = new \WSHC\Memberships\ProfileEditor();
         $this->module_manager = new \WSHC\Core\ModuleManager();
         $this->theme_manager = new \WSHC\Theme\ThemeManager();
@@ -58,7 +59,7 @@ class Plugin {
      */
     private function define_admin_hooks() {
 
-        add_action('admin_init', ['\WSHC\Core\Activator', 'create_pages']);
+        add_action('init', ['\WSHC\Core\Activator', 'create_pages']);
         add_action('init', [$this->contact_manager, 'admin_init']);
         add_action('init', [$this->profile_editor, 'init']);
         add_action('init', [$this->module_manager, 'init']);
@@ -81,6 +82,7 @@ class Plugin {
         add_action('init', [$this->contact_manager, 'init']);
         add_action('init', [$this->program_manager, 'init']);
         add_action('init', [$this->about_manager, 'init']);
+        add_action('init', [$this->legal_manager, 'init']);
     }
 
     /**

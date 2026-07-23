@@ -5,17 +5,30 @@ jQuery(document).ready(function($) {
     const registryList = $('#wshc-member-registry');
     const searchInput = $('#wshc-directory-search');
 
-    // Asynchronous Search Logic
-    if (searchInput.length) {
-        searchInput.on('input', function() {
-            clearTimeout(searchTimer);
-            const query = $(this).val();
+    const specialtyFilter = $('#wshc-specialty-filter');
+    const countryFilter = $('#wshc-country-filter');
 
-            searchTimer = setTimeout(function() {
-                offset = 0; // Reset offset for new search
-                loadBatch(true, query);
-            }, 500); // 500ms debounce
-        });
+    // Asynchronous Search Logic
+    function triggerSearch() {
+        clearTimeout(searchTimer);
+        const query = searchInput.val();
+
+        searchTimer = setTimeout(function() {
+            offset = 0; // Reset offset for new search
+            loadBatch(true, query);
+        }, 500); // 500ms debounce
+    }
+
+    if (searchInput.length) {
+        searchInput.on('input', triggerSearch);
+    }
+
+    if (specialtyFilter.length) {
+        specialtyFilter.on('change', triggerSearch);
+    }
+
+    if (countryFilter.length) {
+        countryFilter.on('change', triggerSearch);
     }
 
     // Load More Logic
@@ -32,6 +45,8 @@ jQuery(document).ready(function($) {
      * @param {string} search - The search query.
      */
     function loadBatch(replace = false, search = '') {
+        const specialty = specialtyFilter.val();
+        const country = countryFilter.val();
         const btn = $('#wshc-load-more');
         const originalBtnText = btn.html();
 
@@ -47,7 +62,9 @@ jQuery(document).ready(function($) {
             data: {
                 action: 'wshc_load_more_members',
                 offset: offset,
-                search: search
+                search: search,
+                specialty: specialty,
+                country: country
             },
             success: function(response) {
                 registryList.css('opacity', '1');
@@ -82,4 +99,41 @@ jQuery(document).ready(function($) {
             }
         });
     }
+    // Admin Add Member Modal
+    $('#admin-add-member-btn').on('click', function(e) {
+        e.preventDefault();
+        $('#admin-add-member-modal').css('display', 'flex').hide().fadeIn(200);
+    });
+
+    $('#admin-add-member-modal .close-modal').on('click', function(e) {
+        e.preventDefault();
+        $('#admin-add-member-modal').fadeOut(200);
+    });
+
+    $('#admin-add-member-form').on('submit', function(e) {
+        e.preventDefault();
+        const form = $(this);
+        const btn = form.find('button[type="submit"]');
+        const originalText = btn.text();
+
+        btn.prop('disabled', true).text('CREATING...');
+
+        $.ajax({
+            url: wshc_directory_obj.ajaxurl,
+            type: 'POST',
+            data: form.serialize() + '&action=wshc_admin_add_member&nonce=' + wshc_directory_obj.nonce,
+            success: function(response) {
+                btn.prop('disabled', false).text(originalText);
+                if (response.success) {
+                    $('#admin-add-member-modal').fadeOut(200);
+                    form[0].reset();
+                    // Instantly append by reloading the first batch
+                    offset = 0;
+                    loadBatch(true, searchInput.val());
+                } else {
+                    alert(response.data.message);
+                }
+            }
+        });
+    });
 });
