@@ -110,6 +110,10 @@ class Activator {
                 'title'   => 'Official Members Directory',
                 'content' => '[wshc_members_directory]',
             ],
+            'institutions' => [
+                'title'   => 'Global Encyclopedia of Academies',
+                'content' => '[wshc_institutions_directory]',
+            ],
             'research' => [
                 'title'   => 'Scientific Research Engine & Repository',
                 'content' => '[wshc_scientific_engine]',
@@ -125,6 +129,10 @@ class Activator {
             'about' => [
                 'title'   => 'About Us',
                 'content' => '[wshc_about_us]',
+            ],
+            'legal' => [
+                'title'   => 'Legal & Policies',
+                'content' => '[wshc_legal_policies]',
             ],
         ];
 

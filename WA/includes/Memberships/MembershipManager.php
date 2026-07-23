@@ -12,6 +12,7 @@ class MembershipManager {
     public function init() {
         add_filter('get_avatar', [$this, 'use_custom_avatar'], 10, 5);
         add_shortcode('wshc_members_directory', [$this, 'render_public_directory']);
+        add_shortcode('wshc_institutions_directory', [$this, 'render_institutions_directory']);
 
         // Automated Lifecycle Pipeline
         add_action('wshc_check_expirations', [$this, 'automated_expiration_pipeline']);
@@ -28,6 +29,7 @@ class MembershipManager {
         add_action('wp_ajax_wshc_list_memberships', [$this, 'list_memberships']);
         add_action('wp_ajax_wshc_list_expired_memberships', [$this, 'list_expired_memberships']);
         add_action('wp_ajax_wshc_delete_membership', [$this, 'delete_membership']);
+        add_action('wp_ajax_wshc_admin_add_member', [$this, 'admin_add_member']);
         add_action('wp_ajax_wshc_get_application_details', [$this, 'get_application_details']);
         add_action('wp_ajax_wshc_send_clarification', [$this, 'send_clarification']);
         add_action('wp_ajax_wshc_get_membership_data', [$this, 'get_membership_data']);
@@ -425,6 +427,61 @@ class MembershipManager {
     }
 
     /**
+     * Admin adds a new member directly.
+     */
+    public function admin_add_member() {
+        check_ajax_referer('wshc_directory_nonce', 'nonce');
+
+        if (!current_user_can('administrator')) {
+            wp_send_json_error(['message' => 'Permission denied.']);
+        }
+
+        $username = sanitize_user($_POST['username']);
+        $email = sanitize_email($_POST['email']);
+        $full_name = sanitize_text_field($_POST['full_name']);
+        $specialty = sanitize_text_field($_POST['specialty']);
+        $password = $_POST['password'];
+
+        if (username_exists($username) || email_exists($email)) {
+            wp_send_json_error(['message' => 'Username or email already exists.']);
+        }
+
+        $user_id = wp_create_user($username, $password, $email);
+        if (is_wp_error($user_id)) {
+            wp_send_json_error(['message' => $user_id->get_error_message()]);
+        }
+
+        // Set role
+        $user = new \WP_User($user_id);
+        $user->set_role('wshc_member');
+
+        wp_update_user([
+            'ID' => $user_id,
+            'display_name' => $full_name,
+            'first_name' => $full_name,
+        ]);
+
+        update_user_meta($user_id, 'wshc_specialization', $specialty);
+        update_user_meta($user_id, 'wshc_membership_id', $this->generate_membership_id());
+        update_user_meta($user_id, 'wshc_membership_expiry', date('Y-m-d H:i:s', strtotime('+1 year')));
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'wshc_membership_applications';
+        $wpdb->insert($table, [
+            'user_id' => $user_id,
+            'full_name' => $full_name,
+            'major' => $specialty,
+            'status' => 'approved',
+            'created_at' => current_time('mysql'),
+            'updated_at' => current_time('mysql')
+        ]);
+
+        \WSHC\UserManagement\ActivityLogger::log($user_id, 'admin_member_created', "Admin created new member: $full_name");
+
+        wp_send_json_success(['message' => 'Member created successfully.']);
+    }
+
+    /**
      * Delete membership and revert to Visitor.
      */
     public function delete_membership() {
@@ -529,6 +586,8 @@ class MembershipManager {
     public function load_more_members() {
         $offset = isset($_POST['offset']) ? intval($_POST['offset']) : 0;
         $search = isset($_POST['search']) ? sanitize_text_field($_POST['search']) : '';
+        $specialty = isset($_POST['specialty']) ? sanitize_text_field($_POST['specialty']) : '';
+        $country = isset($_POST['country']) ? sanitize_text_field($_POST['country']) : '';
 
         global $wpdb;
         $table = $wpdb->prefix . 'wshc_membership_applications';
@@ -540,6 +599,16 @@ class MembershipManager {
             $search_wildcard = '%' . $wpdb->esc_like($search) . '%';
             $where .= " AND (a.full_name LIKE %s OR a.major LIKE %s OR m.meta_value LIKE %s)";
             array_push($params, $search_wildcard, $search_wildcard, $search_wildcard);
+        }
+
+        if (!empty($specialty)) {
+            $where .= " AND a.major = %s";
+            $params[] = $specialty;
+        }
+
+        if (!empty($country)) {
+            $where .= " AND a.nationality = %s";
+            $params[] = $country;
         }
 
         $query_str = "
@@ -678,10 +747,26 @@ class MembershipManager {
         wp_enqueue_script('wshc-directory-js', WSHC_PLUGIN_URL . 'assets/js/directory.js', ['jquery'], '1.0.0', true);
         wp_localize_script('wshc-directory-js', 'wshc_directory_obj', [
             'ajaxurl' => admin_url('admin-ajax.php'),
+            'nonce'   => wp_create_nonce('wshc_directory_nonce'),
         ]);
 
         ob_start();
         $template_path = WSHC_PLUGIN_DIR . 'templates/portal/members-directory.php';
+        if (file_exists($template_path)) {
+            include $template_path;
+        }
+        return ob_get_clean();
+    }
+
+    /**
+     * Render the public institutions directory.
+     */
+    public function render_institutions_directory() {
+        // Enqueue styles & scripts
+        wp_enqueue_style('wshc-directory-style', WSHC_PLUGIN_URL . 'assets/css/directory.css', [], '1.0.0');
+
+        ob_start();
+        $template_path = WSHC_PLUGIN_DIR . 'templates/portal/institutions-directory.php';
         if (file_exists($template_path)) {
             include $template_path;
         }
